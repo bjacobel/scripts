@@ -38,6 +38,9 @@ echo -e "\x1B[1;31m>>>> You'll need to provide a username/password for an admin 
 ./manage.py syncdb
 ./manage.py migrate
 
+mkdir assets
+mkdir assets/{css,js,img}
+
 echo -e "\x1B[1;31m>>>> Version controlling with Git... \x1B[0m"
 git init
 git add .
@@ -54,11 +57,12 @@ read -p "Database name?: " db
 heroku pg:promote $db
 heroku config:add DJANGO_SETTINGS_MODULE=$PROJECTNAME.settings.prod
 #technically pseudorandom, but damn near random enough
-SECRETKEY = cat /dev/urandom|LANG=C tr -dc "a-zA-Z0-9-_\$\?"|fold -w 40|head -1
+SECRETKEY=`cat /dev/urandom|LANG=C tr -dc "a-zA-Z0-9-_\$\?"|fold -w 40|head -1`
 heroku config:add SECRET_KEY=$SECRETKEY
 
-message1="\x1B[1;31m>>>> All done! \nTo test locally: \t./manage.py runserver \nTo run on Heroku: \theroku ps:scale web=1, heroku ps, heroku open\nTo add to GitHub: \tgit remote add git@github.com:bjacobel/"
-message2=".git\x1B[0m"
-message=$message1$PROJECTNAME$message2
+# y'all can have my public S3 access key if you want
+heroku config:add AWS_ACCESS_KEY_ID=AKIAJCJ7UQVOTIBRMJEQ
+heroku config:add AWS_STORAGE_BUCKET_NAME=$PROJECTNAME
 
-echo -e $message
+exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"-env\n\t\t\tdjango runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku ps\n\t\t\theroku open\nTo add to GitHub:\tgit remote add git@github.com:bjacobel/"$PROJECTNAME".git\nTo add S3 storage:\theroku config:add AWS_SECRET_ACCESS_KEY_ID=xxx\n\t\t\tthen create a bucket named the same as this project on S3\x1B[0m"
+echo -e $exitmessage
