@@ -21,23 +21,30 @@ django-admin.py startproject --template=https://github.com/rdegges/django-skel/z
 cd $PROJECTNAME
 echo -e "\x1B[1;31m>>>>Installing requirements...\x1B[0m"
 pip install -r reqs/dev.txt
-#postgresql causes problems
-#pip install psycopg2
+
+#postgresql needs to be installed frm src, pip's version is broken on OSX
+#download the most recent from github
+curl https://codeload.github.com/psycopg/psycopg2/zip/master > psycopg2.zip
+unzip -q psycopg2.zip
+cd psycopg2-master
+easy_install .
+cd ../
+rm -rf psycopg2*
 
 chmod u+x ./manage.py
 
 echo -e "\x1B[1;31m>>>>Setting up your database... \x1B[0m"
-echo -e "\x1B[1;31m>>>>You might need to provide a username/password. \x1B[0m"
+echo -e "\x1B[1;31m>>>>You'll need to provide a username/password for an admin account. \x1B[0m"
 ./manage.py syncdb
 ./manage.py migrate
 
 echo -e "\x1B[1;31m>>>>Version controlling with Git... \x1B[0m"
+cd $PROJECTNAME
 git init
 git add .
 git commit -m "Auto-setup of project skeleton using rdegges/django-skel"
 
 echo -e "\x1B[1;31m>>>>Prepping for Heroku production testing... \x1B[0m"
-cd $PROJECTNAME
 heroku create $PROJECTNAME
 #heroku wants a credit card to be able to add any addons... fake-ass bitche$$
 #heroku addons:add cloudamqp:lemur heroku-postgresql:dev scheduler:standard memcache:5mb newrelic:standard pgbackups:auto-month sentry:developer
@@ -53,7 +60,7 @@ heroku config:add DJANGO_SETTINGS_MODULE=$PROJECTNAME.settings.prod
 SECRETKEY = cat /dev/urandom|LANG=C tr -dc "a-zA-Z0-9-_\$\?"|fold -w 40|head -1
 heroku config:add SECRET_KEY=$SECRETKEY
 
-message1="\x1B[1;31m>>>>All done! \nTo test locally: \t./manage.py runserver \nTo deploy to Heroku: \tgit push heroku master && heroku scale web=1 && heroku ps \nTo add to GitHub: \tgit remote add git@github.com:bjacobel/"
+message1="\x1B[1;31m>>>>All done! \nTo test locally: \t./manage.py runserver \nTo deploy to Heroku: \tgit push heroku master && heroku ps:scale web=1, heroku ps, heroku open\nTo add to GitHub: \tgit remote add git@github.com:bjacobel/"
 message2=".git\x1B[0m"
 message=$message1$PROJECTNAME$message2
 
