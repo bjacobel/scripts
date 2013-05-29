@@ -6,9 +6,6 @@ mkdir $PROJECTNAME
 cd $PROJECTNAME
 
 echo "\x1B[1;31m>>>>Setting up a virtual environment... \x1B[0m"
-export WORKON_HOME=~/Envs
-mkdir -p $WORKON_HOME
-source /usr/local/bin/virtualenvwrapper.sh
 mkvirtualenv $PROJECTNAME-env
 workon $PROJECTNAME-env
 add2virtualenv 'pwd'
