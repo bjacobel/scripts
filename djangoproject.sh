@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# REQUIREMENTS:
+#   * git
+#   * pip
+#   * easy_install
+#   * virtualenvwrapper
+#   * heroku toolbelt
+#   * 'heroku login' complete
+#   * your heroku account verified (with a CC#)
+# the script will exit ungracefully without any one of these
+# tested and working on OSX 10.8 
+
 PROJECTNAME=$1
 
 echo -e "\x1B[1;31m>>>> Setting up a virtual environment... \x1B[0m"
@@ -22,7 +33,7 @@ cd $PROJECTNAME
 echo -e "\x1B[1;31m>>>> Installing requirements...\x1B[0m"
 pip install -r reqs/dev.txt
 
-#postgresql needs to be installed frm src, pip's version is broken on OSX
+#postgresql needs to be installed frm src, pip's version is broken on OSX 10.8
 #download the most recent from github
 curl https://codeload.github.com/psycopg/psycopg2/zip/master > psycopg2.zip #OSX doesn't have wget???
 unzip -q psycopg2.zip
@@ -60,9 +71,9 @@ heroku config:add DJANGO_SETTINGS_MODULE=$PROJECTNAME.settings.prod
 SECRETKEY=`cat /dev/urandom|LANG=C tr -dc "a-zA-Z0-9-_\$\?"|fold -w 40|head -1`
 heroku config:add SECRET_KEY=$SECRETKEY
 
-# y'all can have my public S3 access key if you want
+# exposing my public S3 access key... my laziness is greater than my paranoia
 heroku config:add AWS_ACCESS_KEY_ID=AKIAJCJ7UQVOTIBRMJEQ
 heroku config:add AWS_STORAGE_BUCKET_NAME=$PROJECTNAME
 
-exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"-env\n\t\t\tdjango runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku ps\n\t\t\theroku open\nTo add to GitHub:\tgit remote add git@github.com:bjacobel/"$PROJECTNAME".git\nTo add S3 storage:\theroku config:add AWS_SECRET_ACCESS_KEY_ID=xxx\n\t\t\tthen create a bucket named the same as this project on S3\x1B[0m"
+exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"-env\n\t\t\t./manage.py runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku ps\n\t\t\theroku open\nTo add to GitHub:\tgit remote add git@github.com:bjacobel/"$PROJECTNAME".git\nTo add S3 storage:\theroku config:add AWS_SECRET_ACCESS_KEY_ID=xxx\n\t\t\tthen create a bucket named the same as this project on S3\x1B[0m"
 echo -e $exitmessage
