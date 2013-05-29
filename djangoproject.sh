@@ -58,3 +58,5 @@ message2=".git\x1B[0m"
 message=$message1$PROJECTNAME$message2
 
 echo -e $message
+
+#is git broken?
