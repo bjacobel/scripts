@@ -49,6 +49,10 @@ echo -e "\x1B[1;31m>>>> You'll need to provide a username/password for an admin 
 ./manage.py syncdb
 ./manage.py migrate
 
+rm README.md && touch README.md
+README=$PROJECTNAME"\n=========\nA Django project automagically set up with [rdegges' skeleton](https://github.com/rdegges/django-skel) and [my setup script](https://gist.github.com/bjacobel/5666760)."
+echo -e $README > README.md
+
 mkdir assets
 mkdir assets/{css,js,img}
 
@@ -65,6 +69,7 @@ git push heroku master
 heroku pg:info
 echo -e "\x1B[1;31m>>>> Type in the name of the database Heroku created above: \x1B[0m"
 read -p "Database name?: " db
+echo
 heroku pg:promote $db
 heroku config:add DJANGO_SETTINGS_MODULE=$PROJECTNAME.settings.prod
 #technically pseudorandom, but damn near random enough
@@ -74,6 +79,18 @@ heroku config:add SECRET_KEY=$SECRETKEY
 # exposing my public S3 access key... my laziness is greater than my paranoia
 heroku config:add AWS_ACCESS_KEY_ID=AKIAJCJ7UQVOTIBRMJEQ
 heroku config:add AWS_STORAGE_BUCKET_NAME=$PROJECTNAME
+
+echo -e "\x1B[1;31m>>>> Do you want to add this repo to GitHub?: \x1B[0m"
+read -n1 -p "[y|n]: " yn
+echo
+
+if [ "$yn" == "y" ]; then
+    echo -e "\x1B[1;31m>>>> Creating repo, adding remote, and pushing to GitHub... \x1B[0m"
+    curl -u 'bjacobel' https://api.github.com/user/repos -d '{"name":"'$PROJECTNAME'"}' > /dev/null
+    git remote add origin git@github.com:bjacobel/$PROJECTNAME.git
+    git push -f origin master
+fi
+
 
 exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"-env\n\t\t\t./manage.py runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku ps\n\t\t\theroku open\nTo add to GitHub:\tgit remote add git@github.com:bjacobel/"$PROJECTNAME".git\nTo add S3 storage:\theroku config:add AWS_SECRET_ACCESS_KEY_ID=xxx\n\t\t\tthen create a bucket named the same as this project on S3\x1B[0m"
 echo -e $exitmessage
