@@ -41,6 +41,7 @@ cd psycopg2-master
 easy_install .
 cd ../
 rm -rf psycopg2*
+rm -f psycopg2.zip
 
 chmod u+x ./manage.py
 
@@ -63,7 +64,13 @@ git commit -m "Auto-setup of project skeleton using rdegges/django-skel"
 
 echo -e "\x1B[1;31m>>>> Prepping for Heroku production testing... \x1B[0m"
 heroku create $PROJECTNAME
-heroku addons:add cloudamqp:lemur heroku-postgresql:dev memcachier:dev scheduler:standard newrelic:standard pgbackups:auto-month sentry:developer
+heroku addons:add cloudamqp:lemur 
+heroku addons:add heroku-postgresql:dev 
+heroku addons:add memcachier:dev 
+heroku addons:add scheduler:standard 
+heroku addons:add newrelic:standard 
+heroku addons:add pgbackups:auto-month 
+heroku addons:add sentry:developer
 echo -e "\x1B[1;31m>>>> Pushing to Heroku and installing requirements...\x1B[0m"
 git push heroku master
 heroku pg:info
