@@ -1,0 +1,20 @@
+#!/bin/bash
+
+read -p "File or folder to sync? " locpath
+
+echo "Default destination is /var/www/, is this OK? "
+
+select opt in "y" "n"; do
+case $opt in
+    y ) rempath="/var/www/"; break;;
+    n ) read -p "Well where the hell do you want me to put it then?? " rempath; break;;
+    esac
+done
+
+#find . -name bonus -or -prune -print0 | xargs -0 sudo chown -R www-data /usr/local/html/*
+
+cd /usr/local/html
+
+rsync -v -r -e "ssh -p 2200" --delete --update --perms --chmod=u=rX,go=rX --rsync-path="sudo rsync" --owner=www-data --exclude 'djangotut' --exclude 'bonus' $locpath bearbox.bjacobel.com:$rempath
+
+echo "Done syncing!"
