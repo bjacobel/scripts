@@ -99,5 +99,5 @@ if [ "$yn" == "y" ]; then
 fi
 
 
-exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"-env\n\t\t\t./manage.py runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku ps\n\t\t\theroku open\nTo add to GitHub:\tgit remote add git@github.com:bjacobel/"$PROJECTNAME".git\nTo add S3 storage:\theroku config:add AWS_SECRET_ACCESS_KEY_ID=xxx\n\t\t\tthen create a bucket named the same as this project on S3\x1B[0m"
+exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"-env\n\t\t\t./manage.py runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku ps\n\t\t\theroku open\nTo add to GitHub:\tgit remote add git@github.com:bjacobel/"$PROJECTNAME".git\nTo add S3 storage:\theroku config:add AWS_SECRET_ACCESS_KEY_ID=xxx\n\x1B[0m"
 echo -e $exitmessage
