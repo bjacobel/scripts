@@ -54,8 +54,8 @@ rm README.md && touch README.md
 README=$PROJECTNAME"\n=========\nA Django project automagically set up with [rdegges' skeleton](https://github.com/rdegges/django-skel) and [my setup script](https://gist.github.com/bjacobel/5666760)."
 echo -e $README > README.md
 
-mkdir assets
-mkdir assets/{css,js,img}
+mkdir $PROJECTNAME/assets
+mkdir $PROJECTNAME/assets/{css,js,img}
 
 echo -e "\x1B[1;31m>>>> Version controlling with Git... \x1B[0m"
 git init
