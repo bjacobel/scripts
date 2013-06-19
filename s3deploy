@@ -1,0 +1,4 @@
+#!/bin/bash
+
+heroku run python manage.py fasts3collectstatic
+heroku run python manage.py compress
