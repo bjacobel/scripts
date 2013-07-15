@@ -14,11 +14,10 @@
 PROJECTNAME=$1
 
 echo -e "\x1B[1;31m>>>> Setting up a virtual environment... \x1B[0m"
-export WORKON_HOME=~/Envs
-mkdir -p $WORKON_HOME
-source /usr/local/bin/virtualenvwrapper.sh
-mkvirtualenv $PROJECTNAME-env
-workon $PROJECTNAME-env
+source /usr/local/share/python/virtualenvwrapper.sh
+export WORKON_HOME=~/.virtualenvs
+mkvirtualenv $PROJECTNAME
+workon $PROJECTNAME
 add2virtualenv 'pwd'
 
 echo -e "\x1B[1;31m>>>> Installing the latest Django... \x1B[0m"

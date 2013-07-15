@@ -13,9 +13,6 @@ use LWP::UserAgent;
 ## default path is current folder, can change it to whatever... ie: /var/log or c:/temp
 $ipfile    = '/var/log/ipup.txt';
 
-
-
-
     #read the previous ip address
     open S, "$ipfile";
     $prev_ip = <S>;
