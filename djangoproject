@@ -97,6 +97,17 @@ if [ "$yn" == "y" ]; then
     git push -f origin master
 fi
 
+echo -e "\x1B[1;31m>>>> Does that mean you already have a Github repo?: \x1B[0m"
+read -n1 -p "[y|n]: " yn
+echo
 
-exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"-env\n\t\t\t./manage.py runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku ps\n\t\t\theroku open\nTo add to GitHub:\tgit remote add git@github.com:bjacobel/"$PROJECTNAME".git\nTo add S3 storage:\theroku config:add AWS_SECRET_ACCESS_KEY_ID=xxx\n\x1B[0m"
+if [ "$yn" == "y" ]; then
+    echo -e "\x1B[1;31m>>>> What's it named?: \x1B[0m"
+    read -n1 -p "Name: " repo
+    git remote add origin git@github.com:bjacobel/$repo.git
+    git push -f origin master
+fi
+
+
+exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"\n\t\t\t./manage.py runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku ps\n\t\t\theroku open\nTo add S3 storage:\theroku config:add AWS_SECRET_ACCESS_KEY_ID=xxx\n\x1B[0m"
 echo -e $exitmessage
