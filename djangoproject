@@ -32,15 +32,15 @@ cd $PROJECTNAME
 echo -e "\x1B[1;31m>>>> Installing requirements...\x1B[0m"
 pip install -r reqs/dev.txt
 
-#postgresql needs to be installed frm src, pip's version is broken on OSX 10.8
-#download the most recent from github
-curl https://codeload.github.com/psycopg/psycopg2/zip/master > psycopg2.zip #OSX doesn't have wget???
-unzip -q psycopg2.zip
-cd psycopg2-master
-easy_install .
-cd ../
-rm -rf psycopg2*
-rm -f psycopg2.zip
+# #postgresql needs to be installed frm src, pip's version is broken on OSX 10.8
+# #download the most recent from github
+# curl https://codeload.github.com/psycopg/psycopg2/zip/master > psycopg2.zip #OSX doesn't have wget???
+# unzip -q psycopg2.zip
+# cd psycopg2-master
+# easy_install .
+# cd ../
+# rm -rf psycopg2*
+# rm -f psycopg2.zip
 
 chmod u+x ./manage.py
 
