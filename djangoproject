@@ -50,7 +50,7 @@ echo -e "\x1B[1;31m>>>> You'll need to provide a username/password for an admin 
 ./manage.py migrate
 
 rm README.md && touch README.md
-README=$PROJECTNAME"\n=========\nA Django project automagically set up with [rdegges' skeleton](https://github.com/rdegges/django-skel) and [my setup script](https://gist.github.com/bjacobel/5666760)."
+README=$PROJECTNAME"\n=========\nA Django project automagically set up with [rdegges' skeleton](https://github.com/rdegges/django-skel) and [my setup script](https://github.com/bjacobel/scripts/blob/master/djangoproject)."
 echo -e $README > README.md
 
 mkdir $PROJECTNAME/assets
@@ -86,7 +86,7 @@ heroku config:add SECRET_KEY=$SECRETKEY
 heroku config:add AWS_ACCESS_KEY_ID=AKIAJCJ7UQVOTIBRMJEQ
 heroku config:add AWS_STORAGE_BUCKET_NAME=$PROJECTNAME
 
-echo -e "\x1B[1;31m>>>> Do you want to add this repo to GitHub?: \x1B[0m"
+echo -e "\x1B[1;31m>>>> Do you want to create a NEW GitHub repo for this project?: \x1B[0m"
 read -n1 -p "[y|n]: " yn
 echo
 
@@ -95,19 +95,21 @@ if [ "$yn" == "y" ]; then
     curl -u 'bjacobel' https://api.github.com/user/repos -d '{"name":"'$PROJECTNAME'"}' > /dev/null
     git remote add origin git@github.com:bjacobel/$PROJECTNAME.git
     git push -f origin master
+else
+    echo -e "\x1B[1;31m>>>> Does that mean you already have a Github repo?: \x1B[0m"
+    read -n1 -p "[y|n]: " yn
+    echo
+
+    if [ "$yn" == "y" ]; then
+        echo -e "\x1B[1;31m>>>> What's it named?: \x1B[0m"
+        read -p "Name: " repo
+        git remote add origin git@github.com:bjacobel/$repo.git
+        git push -f origin master
+    fi
 fi
 
-echo -e "\x1B[1;31m>>>> Does that mean you already have a Github repo?: \x1B[0m"
-read -n1 -p "[y|n]: " yn
-echo
-
-if [ "$yn" == "y" ]; then
-    echo -e "\x1B[1;31m>>>> What's it named?: \x1B[0m"
-    read -n1 -p "Name: " repo
-    git remote add origin git@github.com:bjacobel/$repo.git
-    git push -f origin master
-fi
 
 
-exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"\n\t\t\t./manage.py runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku ps\n\t\t\theroku open\nTo add S3 storage:\theroku config:add AWS_SECRET_ACCESS_KEY_ID=xxx\n\x1B[0m"
+
+exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"\n\t\t\t./manage.py runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku open\nTo add S3 storage:\theroku config:add AWS_SECRET_ACCESS_KEY=xxx\n\t\theroku run collectstatic -c --noinput\n\t\theroku run compress\n\x1B[0m"
 echo -e $exitmessage
