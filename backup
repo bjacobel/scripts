@@ -1,0 +1,7 @@
+#!/bin/sh
+
+DATE=$(date +"%m-%d-%y")
+
+tar -zcpf /backups/backup-$DATE.tar.gz --directory=/ --exclude=proc--exclude=sys --exclude=dev/pts --exclude=backups .
+
+#Unbackup with: tar -zxvpf
