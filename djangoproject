@@ -70,7 +70,7 @@ heroku pg:promote $db
 heroku config:add DJANGO_SETTINGS_MODULE=$PROJECTNAME.settings.prod
 
 SECRETKEY=`cat /dev/urandom|LANG=C tr -dc "a-zA-Z0-9-_\$\?"|fold -w 40|head -1`
-echo -e $SECRETKEY > settings/secret_key 
+echo -e $SECRETKEY > $PROJECTNAME/settings/secret_key 
 heroku config:add SECRET_KEY=$SECRETKEY
 
 heroku config:add AWS_STORAGE_BUCKET_NAME=$PROJECTNAME
@@ -100,5 +100,5 @@ fi
 
 
 
-exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"\n\t\t\t./manage.py runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku open\nTo add S3 storage:\theroku config:add AWS_ACCESS_KEY_ID=xxx\n\t\theroku config:add AWS_SECRET_ACCESS_KEY=xxx\n\t\theroku run collectstatic -c --noinput\n\t\theroku run compress\n\x1B[0m"
+exitmessage="\x1B[1;31m>>>> All done! \nTo test locally:\tworkon "$PROJECTNAME"\n\t\t\t./manage.py runserver \nTo run on Heroku:\theroku ps:scale web=1\n\t\t\theroku open\nTo add S3 storage:\theroku config:add AWS_ACCESS_KEY_ID=xxx\n\t\t\theroku config:add AWS_SECRET_ACCESS_KEY=xxx\n\t\t\theroku run collectstatic -c --noinput\n\x1B[0m"
 echo -e $exitmessage
