@@ -52,7 +52,6 @@ git commit -m "Auto-setup of project skeleton using bjacobel/django-skel"
 echo -e "\x1B[1;31m>>>> Prepping Heroku production environment... \x1B[0m"
 heroku create $PROJECTNAME
 heroku addons:add heroku-postgresql:dev 
-heroku addons:add mailgun:starter
 heroku addons:add memcachier:developer
 heroku addons:add newrelic:wayne
 heroku addons:add pgbackups:auto-month
@@ -67,9 +66,11 @@ read -p "Database name?: " db
 echo
 heroku pg:promote $db
 heroku config:add DJANGO_SETTINGS_MODULE=$PROJECTNAME.settings.prod
-#technically pseudorandom, but damn near random enough
+
 SECRETKEY=`cat /dev/urandom|LANG=C tr -dc "a-zA-Z0-9-_\$\?"|fold -w 40|head -1`
+echo -e $SECRETKEY > settings/secret_key 
 heroku config:add SECRET_KEY=$SECRETKEY
+
 heroku config:add AWS_STORAGE_BUCKET_NAME=$PROJECTNAME
 
 echo -e "\x1B[1;31m>>>> Do you want to create a NEW GitHub repo for this project?: \x1B[0m"
