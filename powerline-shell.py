@@ -311,12 +311,13 @@ def get_short_path(cwd):
             return ['~'] + names[i+1:]
     if not names[0]:
         return ['/']
+
     return names
 
 def add_cwd_segment():
     cwd = powerline.cwd or os.getenv('PWD')
     try:
-        names = get_short_path(cwd.decode('utf-8'))
+        names = get_short_path(cwd)
     except:
         return
 
