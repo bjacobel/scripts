@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import subprocess
 import os
+import re
 import sys
 
 def warn(msg):
-    print '[powerline-bash] ', msg
+    print('[powerline-bash] ', msg)
 
 class Powerline:
     symbols = {
@@ -167,13 +169,6 @@ class DefaultColor:
     VIRTUAL_ENV_BG = 35  # a mid-tone green
     VIRTUAL_ENV_FG = 00
 
-class Color(DefaultColor):
-    """
-    This subclass is required when the user chooses to use 'default' theme.
-    Because the segments require a 'Color' class for every theme.
-    """
-    pass
-
 
 class Color(DefaultColor):
     USERNAME_FG = 19  # dark blue
@@ -219,8 +214,6 @@ class Color(DefaultColor):
     SSH_BG = 166 # medium orange
     SSH_FG = 254
 
-import os
-
 def add_virtual_env_segment():
     env = os.getenv('VIRTUAL_ENV')
     if env is None:
@@ -234,12 +227,9 @@ def add_virtual_env_segment():
 add_virtual_env_segment()
 
 
-import subprocess
-
-
 def add_ruby_version_segment():
     try:
-        if os.environ.has_key("GEM_HOME"):
+        if "GEM_HOME" in os.environ:
             gem = os.environ["GEM_HOME"].split("@")
 
             # Only display info if a non-default gemset is present
@@ -248,7 +238,7 @@ def add_ruby_version_segment():
 
                 bg = Color.RUBY_VERSION_BG
                 fg = Color.RUBY_VERSION_FG
-                
+
                 powerline.append(version, fg, bg)
     except OSError:
         return
@@ -302,8 +292,6 @@ def add_hostname_segment():
 add_hostname_segment()
 
 
-import os
-
 def add_ssh_segment():
 
     if os.getenv('SSH_CLIENT'):
@@ -311,8 +299,6 @@ def add_ssh_segment():
 
 add_ssh_segment()
 
-
-import os
 
 def get_short_path(cwd):
     home = os.getenv('HOME')
@@ -336,7 +322,7 @@ def add_cwd_segment():
 
     max_depth = powerline.args.cwd_max_depth
     if len(names) > max_depth:
-        names = names[:2] + [u'\u2026'] + names[2 - max_depth:]
+        names = names[:2] + ['\u2026'] + names[2 - max_depth:]
 
     if not powerline.args.cwd_only:
         for n in names[:-1]:
@@ -354,8 +340,6 @@ def add_cwd_segment():
 add_cwd_segment()
 
 
-import os
-
 def add_read_only_segment():
     cwd = powerline.cwd or os.getenv('PWD')
 
@@ -365,18 +349,15 @@ def add_read_only_segment():
 add_read_only_segment()
 
 
-import re
-import subprocess
-
 def get_git_status():
     has_pending_commits = True
     has_untracked_files = False
     origin_position = ""
     output = subprocess.Popen(['git', 'status', '--ignore-submodules'],
             env={"LANG": "C", "HOME": os.getenv("HOME")}, stdout=subprocess.PIPE).communicate()[0]
-    for line in output.split('\n'):
+    for line in output.split(b'\n'):
         origin_status = re.findall(
-            r"Your branch is (ahead|behind).*?(\d+) comm", line)
+            b"Your branch is (ahead|behind).*?(\d+) comm", line)
         if origin_status:
             origin_position = " %d" % int(origin_status[0][1])
             if origin_status[0][0] == 'behind':
@@ -384,9 +365,9 @@ def get_git_status():
             if origin_status[0][0] == 'ahead':
                 origin_position += u'\u21E1'
 
-        if line.find('nothing to commit') >= 0:
+        if line.find(b'nothing to commit') >= 0:
             has_pending_commits = False
-        if line.find('Untracked files') >= 0:
+        if line.find(b'Untracked files') >= 0:
             has_untracked_files = True
     return has_pending_commits, has_untracked_files, origin_position
 
@@ -396,11 +377,11 @@ def add_git_segment():
     p = subprocess.Popen(['git', 'symbolic-ref', '-q', 'HEAD'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
 
-    if 'Not a git repo' in err:
+    if b'Not a git repo' in err:
         return
 
     if out:
-        branch = out[len('refs/heads/'):].rstrip()
+        branch = out[len('refs/heads/'):].rstrip().decode("UTF-8")
     else:
         branch = '(Detached)'
 
@@ -423,10 +404,6 @@ except OSError:
     pass
 except subprocess.CalledProcessError:
     pass
-
-
-import os
-import subprocess
 
 def get_hg_status():
     has_modified_files = False
@@ -492,9 +469,6 @@ except subprocess.CalledProcessError:
     pass
 
 
-import os
-import subprocess
-
 def get_fossil_status():
     has_modified_files = False
     has_untracked_files = False
@@ -534,14 +508,10 @@ except subprocess.CalledProcessError:
     pass
 
 
-import os
-import re
-import subprocess
-
 def add_jobs_segment():
     pppid = subprocess.Popen(['ps', '-p', str(os.getppid()), '-oppid='], stdout=subprocess.PIPE).communicate()[0].strip()
     output = subprocess.Popen(['ps', '-a', '-o', 'ppid'], stdout=subprocess.PIPE).communicate()[0]
-    num_jobs = len(re.findall(str(pppid), output)) - 1
+    num_jobs = len(re.findall(pppid, output)) - 1
 
     if num_jobs > 0:
         powerline.append(' %d ' % num_jobs, Color.JOBS_FG, Color.JOBS_BG)
@@ -564,5 +534,4 @@ def add_root_indicator_segment():
 
 add_root_indicator_segment()
 
-
-sys.stdout.write(powerline.draw())
+os.write(1, powerline.draw())
