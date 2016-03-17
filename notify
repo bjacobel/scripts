@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'terminal-notifier'
+
+message = ARGV[0] || "Task completed"
+title = ARGV[1] || "iTerm 2"
+activate = 'com.googlecode.iterm2'
+
+TerminalNotifier.notify(message, :title => title, :activate => activate)
