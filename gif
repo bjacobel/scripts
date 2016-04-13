@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# requires aws-cli, pbcopy and agrep (`tre` in brew)
+
+if [ -z $1 ]
+  then
+    echo "Usage: gif <search term>"
+    exit 1
+fi
+
+# if /tmp/gifs doesn't exist or is older than 1 hour
+if [ ! -s /tmp/gifs -o $(expr `date +%s` - `stat -f%c ./gif`) -gt 3600 ]; then
+  echo "Updating database..."
+  aws s3 ls s3://gifs.bjacobel.com | awk '{print $NF}' | sed "s/\\./\ /g" | awk '{print $(NF-1)}' > /tmp/gifs
+fi
+
+RESULTS=`agrep -B $1 /tmp/gifs`
+
+if [ `echo "$RESULTS" | wc -l` -gt 1 ]; then
+  echo "$RESULTS" > /tmp/gifs-grepped
+  awk '{printf("%d: %s\n", NR, $0)}' /tmp/gifs-grepped
+  read -p "Which should I copy? " LINE
+  RESULTS=`echo "$RESULTS" | awk NR==$LINE`
+fi
+
+echo "https://gifs.bjacobel.com/$RESULTS.gif" | pbcopy
+echo "Copied: $RESULTS"
