@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# requires aws-cli, pbcopy and agrep (`tre` in brew)
+# requires:
+# aws-cli (pip install aws-cli)
+# pbcopy (installed on osx by default, if you're on Linux ¯\_(ツ)_/¯)
+# agrep (brew install tre)
 
 if [ -z $1 ]
   then
@@ -9,7 +12,7 @@ if [ -z $1 ]
 fi
 
 # if /tmp/gifs doesn't exist or is older than 1 hour
-if [ ! -s /tmp/gifs -o $(expr `date +%s` - `stat -f%c ./gif`) -gt 3600 ]; then
+if [ ! -s /tmp/gifs -o $(expr `date +%s` - `stat -f%c /tmp/gifs`) -gt 3600 ]; then
   echo "Updating database..."
   aws s3 ls s3://gifs.bjacobel.com | awk '{print $NF}' | sed "s/\\./\ /g" | awk '{print $(NF-1)}' > /tmp/gifs
 fi
@@ -23,5 +26,5 @@ if [ `echo "$RESULTS" | wc -l` -gt 1 ]; then
   RESULTS=`echo "$RESULTS" | awk NR==$LINE`
 fi
 
-echo "https://gifs.bjacobel.com/$RESULTS.gif" | pbcopy
+echo "https://gifs.bjacobel.com/$RESULTS.gif" | tr -d '\r\n' | pbcopy
 echo "Copied: $RESULTS"
