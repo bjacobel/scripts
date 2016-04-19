@@ -12,7 +12,7 @@ if [ -z $1 ]
 fi
 
 # if /tmp/gifs doesn't exist or is older than 1 hour
-if [ ! -s /tmp/gifs -o $(expr `date +%s` - `stat -f%c /tmp/gifs`) -gt 3600 ]; then
+if [[ ! -s /tmp/gifs || $(expr `date +%s` - `stat -f%c /tmp/gifs`) -gt 3600 ]]; then
   echo "Updating database..."
   aws s3 ls s3://gifs.bjacobel.com | awk '{print $NF}' | sed "s/\\./\ /g" | awk '{print $(NF-1)}' > /tmp/gifs
 fi
