@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ -z $* ]
+  then
+    echo "Usage: file <filename>"
+    exit 1
+fi
+
+SHORTNAME=`basename $*`
+
+aws s3 cp $* s3://files.bjacobel.com/$SHORTNAME \
+  --quiet \
+  --acl=public-read \
+  --recursive
+
+URL="https://files.bjacobel.com/$SHORTNAME"
+
+echo "--> $URL"
+echo $URL | pbcopy
