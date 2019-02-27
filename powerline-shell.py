@@ -263,18 +263,18 @@ def add_username_segment():
 
     powerline.append(user_prompt, Color.USERNAME_FG, bgcolor)
 
-#add_username_segment()
+# add_username_segment()
 
 
 def add_hostname_segment():
     if powerline.args.colorize_hostname:
-        from lib.color_compliment import stringToHashToColorAndOpposite
-        from lib.colortrans import rgb2short
-        from socket import gethostname
-        hostname = gethostname()
+        from powerlinelib.color_compliment import stringToHashToColorAndOpposite
+        from powerlinelib.colortrans import rgb2short
+        from os import environ
+        hostname = environ['HOSTNAME'] or "bash"
         FG, BG = stringToHashToColorAndOpposite(hostname)
         FG, BG = (rgb2short(*color) for color in [FG, BG])
-        host_prompt = ' %s' % hostname.split('.')[0]
+        host_prompt = ' %s ' % hostname.split('.')[0]
 
         powerline.append(host_prompt, FG, BG)
     else:
